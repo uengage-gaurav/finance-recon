@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Finance Reconciliation Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #fce4ec);
+            min-height: 100vh;
+        }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 1rem;
+        }
+        
+        .table-glass th,
+        .table-glass td {
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.75rem;
+        }
+        
+        .table-glass th {
+            background-color: rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+        }
+        
+        .table-glass td {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+
+<body class="py-12 px-6">
+    <div class="max-w-6xl mx-auto space-y-10">
+
+        <!-- Header -->
+        <header>
+            <h1 class="text-3xl font-semibold text-gray-800">📊 Finance Reconciliation</h1>
+            <p class="text-gray-600 mt-1">Compare LSP reports against Master data using classy glassmorphism.</p>
+        </header>
+
+        <!-- Upload Form -->
+        <div class="glass p-6">
+            <form method="POST" enctype="multipart/form-data" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Master Sheet (.xlsx)</label>
+                    <input type="file" name="master_sheet" required class="block w-full rounded-md border border-gray-300 px-4 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">LSP Sheet (.xlsx)</label>
+                    <input type="file" name="lsp_sheet" required class="block w-full rounded-md border border-gray-300 px-4 py-2 text-sm">
+                </div>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md font-medium">
+          Upload & Reconcile
+        </button>
+            </form>
+        </div>
+
+        <!-- Summary Cards -->
+        {% if summary %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {% for key, value in summary.items() %}
+            <div class="glass p-4 text-center text-white 
+            {% if 'Not Matched' in key %}bg-red-500
+            {% elif 'Greater than Master' in key %}bg-yellow-500
+            {% elif 'Lower than Master' in key %}bg-blue-500
+            {% elif 'Matched' in key %}bg-green-500
+            {% else %}bg-gray-500{% endif %}">
+                <h3 class="text-sm font-medium">{{ key }}</h3>
+                <p class="text-2xl font-bold">{{ value }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Download Button -->
+        <form action="/download">
+            <button type="submit" class="mt-6 bg-green-600 hover:bg-green-700 text-white font-medium text-sm px-5 py-2.5 rounded-md">
+          📥 Download Reconciliation Report
+        </button>
+        </form>
+        {% endif %}
+
+        <!-- Result Table -->
+        {% for table in tables %}
+        <div class="glass p-4 overflow-x-auto">
+            <table class="table-glass w-full text-sm text-white rounded-md">
+                {{ table|safe }}
+            </table>
+        </div>
+        {% endfor %}
+
+    </div>
+</body>
+
+</html>
