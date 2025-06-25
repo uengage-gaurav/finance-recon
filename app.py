@@ -82,4 +82,4 @@ def process_files(master_path, lsp_path):
     return final_df, summary_counts
 
 if __name__ == '__main__':
-    app.run(debug=False, port=10001)
+    app.run(host='0.0.0.0', port=10001)
